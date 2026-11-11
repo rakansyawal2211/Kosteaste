@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Kost - Kost Ibu Lia</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #1769aa;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 25px 15px;
+            overflow-y: auto;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h2 {
+            font-size: 22px;
+        }
+
+        .logo p {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            margin-bottom: 8px;
+        }
+
+        .menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: rgba(255,255,255,0.18);
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+        }
+
+        .admin-name {
+            background: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        /* STATISTIC */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .stat-card p {
+            color: #777;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .stat-card h2 {
+            font-size: 26px;
+            color: #1769aa;
+        }
+
+        /* CONTENT */
+
+        .content-box {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+            margin-bottom: 25px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .content-header h2 {
+            font-size: 21px;
+        }
+
+        .btn {
+            border: none;
+            padding: 9px 14px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .btn-blue {
+            background: #1769aa;
+            color: white;
+        }
+
+        .btn-blue:hover {
+            background: #135588;
+        }
+
+        /* FORM INPUT PEMBAYARAN */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        /* TABLE */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 750px;
+        }
+
+        th {
+            background: #f4f6f9;
+            text-align: left;
+            padding: 14px;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 15px 14px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        /* STATUS BADGE */
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-booking {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-terisi {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-tersedia {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-baru {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-proses {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-selesai {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-lunas {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-belum {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* BUTTON AKSI */
+
+        .btn-terima {
+            background: #28a745;
+            color: white;
+            margin-right: 4px;
+        }
+
+        .btn-tolak {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-wa {
+            background: #25d366;
+            color: white;
+            margin-top: 5px;
+            display: inline-block;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-status {
+            background: #1769aa;
+            color: white;
+            margin-right: 4px;
+        }
+
+        /* KAMAR GRID */
+
+        .rooms {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .room {
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+
+        .room h3 {
+            margin-bottom: 10px;
+        }
+
+        .room p {
+            color: #777;
+            margin-bottom: 12px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 1000px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .rooms {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .menu {
+                display: flex;
+                gap: 5px;
+                overflow-x: auto;
+            }
+
+            .menu li {
+                min-width: max-content;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .rooms {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="logo">
+        <h2>🏠 KOST IBU LIA</h2>
+        <p>Admin Dashboard</p>
+    </div>
+
+    <ul class="menu">
+        <li><a href="#" class="active">📊 Dashboard</a></li>
+        <li><a href="#booking">📋 Booking</a></li>
+        <li><a href="#laporan">🛠️ Laporan Masuk</a></li>
+        <li><a href="#pembayaran">💰 Data Pembayaran</a></li>
+        <li><a href="#kamar">🏠 Data Kamar</a></li>
+        <li><a href="#penyewa">👤 Penyewa</a></li>
+        <li><a href="#pengaturan">⚙️ Pengaturan</a></li>
+        <li><a href="#" onclick="alert('Berhasil Logout')">🚪 Logout</a></li>
+    </ul>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <div>
+            <h1>Dashboard Admin</h1>
+            <p>Pantau pemasukan sewa, booking, dan laporan masuk secara real-time 👋</p>
+        </div>
+        <div class="admin-name">
+            👤 Admin Kost Ibu Lia
+        </div>
+    </div>
+
+    <!-- STATISTICS -->
+    <div class="stats">
+        <div class="stat-card">
+            <p>Total Pemasukan Bulan Ini</p>
+            <h2 id="totalPemasukan" style="color: #28a745;">Rp0</h2>
+        </div>
+        <div class="stat-card">
+            <p>Kamar Tersedia</p>
+            <h2 id="tersedia">17</h2>
+        </div>
+        <div class="stat-card">
+            <p>Laporan Masuk (Baru)</p>
+            <h2 id="statLaporanBaru" style="color: #dc3545;">0</h2>
+        </div>
+        <div class="stat-card">
+            <p>Kamar Terisi</p>
+            <h2 id="terisi">1</h2>
+        </div>
+    </div>
+
+    <!-- BOOKING TERBARU -->
+    <div class="content-box" id="booking">
+        <div class="content-header">
+            <h2>📋 Daftar Booking Kamar</h2>
+            <button class="btn btn-blue" onclick="refreshData()">🔄 Refresh Data</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>No. WhatsApp</th>
+                        <th>Kamar</th>
+                        <th>Tanggal Masuk</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="bookingTable">
+                    <tr id="booking-1">
+                        <td>Budi Santoso</td>
+                        <td>081234567890</td>
+                        <td>Kamar Standard - Rp1.400.000/bulan</td>
+                        <td>01/10/2026</td>
+                        <td><span class="status status-booking">Booking</span></td>
+                        <td>
+                            <button class="btn btn-terima" onclick="terimaBooking(1)">✓ Terima</button>
+                            <button class="btn btn-tolak" onclick="tolakBooking(1)">✕ Tolak</button><br>
+                            <a href="https://wa.me/6281234567890" target="_blank" class="btn btn-wa">💬 WhatsApp</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- DAFTAR LAPORAN KERUSAKAN MASUK -->
+    <div class="content-box" id="laporan">
+        <div class="content-header">
+            <h2>🛠️ Daftar Laporan Masuk dari Penghuni</h2>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Penghuni & Kamar</th>
+                        <th>Jenis Kerusakan</th>
+                        <th>Keterangan</th>
+                        <th>Status</th>
+                        <th>Aksi Pengelolaan</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelAdminLaporan">
+                    <!-- Dimuat otomatis via localStorage -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- DATA MASTER PEMBAYARAN PENYEWA -->
+    <div class="content-box" id="pembayaran">
+        <div class="content-header">
+            <h2>💰 Data Master Pembayaran Sewa Kost</h2>
+        </div>
+
+        <!-- Form Tambah Catatan Pembayaran Baru -->
+        <div style="background: #f9fbfd; padding: 20px; border-radius: 10px; border: 1px solid #e1e8ed; margin-bottom: 25px;">
+            <h3 style="font-size: 15px; color: #1769aa; margin-bottom: 15px;">+ Catat Pembayaran Penyewa Baru</h3>
+            <form onsubmit="tambahPembayaran(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nama Penyewa</label>
+                        <input type="text" id="bayarNama" placeholder="Nama lengkap penyewa" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nomor Kamar</label>
+                        <input type="text" id="bayarKamar" placeholder="Contoh: Kamar 05" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Jumlah Bayar (Rp)</label>
+                        <input type="number" id="bayarJumlah" placeholder="Contoh: 1400000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Bulan / Periode</label>
+                        <input type="text" id="bayarPeriode" placeholder="Contoh: Oktober 2026" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Status Pembayaran</label>
+                        <select id="bayarStatus" required>
+                            <option value="Lunas">Lunas</option>
+                            <option value="Belum Bayar">Belum Bayar</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-blue" style="margin-top: 5px;">Simpan Data Pembayaran</button>
+            </form>
+        </div>
+
+        <!-- Tabel Riwayat Pembayaran -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Penyewa & Kamar</th>
+                        <th>Periode</th>
+                        <th>Jumlah Bayar</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelPembayaranBody">
+                    <!-- Diisi otomatis via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- DATA KAMAR -->
+    <div class="content-box" id="kamar">
+        <div class="content-header">
+            <h2>🏠 Status Kamar</h2>
+            <button class="btn btn-blue" onclick="tambahKamar()">+ Tambah Kamar</button>
+        </div>
+
+        <div class="rooms">
+            <div class="room">
+                <h3>Kamar 01</h3>
+                <p>Rp1.400.000 / bulan</p>
+                <span class="status status-tersedia">Tersedia</span>
+            </div>
+            <div class="room">
+                <h3>Kamar 02</h3>
+                <p>Rp1.600.000 / bulan</p>
+                <span class="status status-terisi">Terisi</span>
+            </div>
+            <div class="room">
+                <h3>Kamar 03</h3>
+                <p>Rp1.400.000 / bulan</p>
+                <span class="status status-tersedia">Tersedia</span>
+            </div>
+            <div class="room">
+                <h3>Kamar 04</h3>
+                <p>Rp1.600.000 / bulan</p>
+                <span class="status status-tersedia">Tersedia</span>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    const STORAGE_KEY_RUSAK = "laporan_kerusakan_kost_bu_lia";
+    const STORAGE_KEY_BAYAR = "data_pembayaran_kost_bu_lia";
+
+    window.onload = function() {
+        muatDataLaporanAdmin();
+        muatDataPembayaran();
+    };
+
+    // ==========================================
+    // MANAJEMEN LAPORAN KERUSAKAN
+    // ==========================================
+    function muatDataLaporanAdmin() {
+        const dataLaporan = JSON.parse(localStorage.getItem(STORAGE_KEY_RUSAK)) || [];
+        const tbody = document.getElementById("tabelAdminLaporan");
+        tbody.innerHTML = "";
+
+        let jumlahBaru = 0;
+
+        if (dataLaporan.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#777; padding:20px;">Belum ada laporan kerusakan masuk.</td></tr>`;
+        } else {
+            dataLaporan.forEach((item, index) => {
+                if (item.status === "Baru") jumlahBaru++;
+
+                let badgeClass = "badge-baru";
+                if (item.status === "Diproses") badgeClass = "badge-proses";
+                if (item.status === "Selesai") badgeClass = "badge-selesai";
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong>${item.nama}</strong><br><small style="color:#666;">${item.kamar}</small></td>
+                        <td>${item.jenis}</td>
+                        <td>${item.keterangan}</td>
+                        <td><span class="status ${badgeClass}">${item.status}</span></td>
+                        <td>
+                            <button class="btn btn-status" onclick="ubahStatusLaporan(${index})">🔄 Ubah Status</button>
+                            <button class="btn btn-tolak" onclick="hapusLaporanAdmin(${index})">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        document.getElementById("statLaporanBaru").innerText = jumlahBaru;
+    }
+
+    function ubahStatusLaporan(index) {
+        let dataLaporan = JSON.parse(localStorage.getItem(STORAGE_KEY_RUSAK)) || [];
+        const statusList = ["Baru", "Diproses", "Selesai"];
+        let currentIdx = statusList.indexOf(dataLaporan[index].status);
+        let nextIdx = (currentIdx + 1) % statusList.length;
+
+        dataLaporan[index].status = statusList[nextIdx];
+        localStorage.setItem(STORAGE_KEY_RUSAK, JSON.stringify(dataLaporan));
+        muatDataLaporanAdmin();
+    }
+
+    function hapusLaporanAdmin(index) {
+        if (confirm("Hapus laporan ini dari sistem?")) {
+            let dataLaporan = JSON.parse(localStorage.getItem(STORAGE_KEY_RUSAK)) || [];
+            dataLaporan.splice(index, 1);
+            localStorage.setItem(STORAGE_KEY_RUSAK, JSON.stringify(dataLaporan));
+            muatDataLaporanAdmin();
+        }
+    }
+
+
+    // ==========================================
+    // DATA MASTER PEMBAYARAN SEWA
+    // ==========================================
+    function ambilDataPembayaran() {
+        const data = localStorage.getItem(STORAGE_KEY_BAYAR);
+        return data ? JSON.parse(data) : [
+            { nama: "Budi Santoso", kamar: "Kamar 05", periode: "Oktober 2026", jumlah: 1400000, status: "Lunas" }
+        ];
+    }
+
+    function simpanDataPembayaran(daftar) {
+        localStorage.setItem(STORAGE_KEY_BAYAR, JSON.stringify(daftar));
+    }
+
+    function tambahPembayaran(event) {
+        event.preventDefault();
+        const nama = document.getElementById("bayarNama").value;
+        const kamar = document.getElementById("bayarKamar").value;
+        const jumlah = Number(document.getElementById("bayarJumlah").value);
+        const periode = document.getElementById("bayarPeriode").value;
+        const status = document.getElementById("bayarStatus").value;
+
+        let daftar = ambilDataPembayaran();
+        daftar.push({ nama, kamar, jumlah, periode, status });
+        simpanDataPembayaran(daftar);
+
+        event.target.reset();
+        muatDataPembayaran();
+        alert("Data pembayaran berhasil disimpan!");
+    }
+
+    function hapusPembayaran(index) {
+        if (confirm("Hapus data pembayaran ini?")) {
+            let daftar = ambilDataPembayaran();
+            daftar.splice(index, 1);
+            simpanDataPembayaran(daftar);
+            muatDataPembayaran();
+        }
+    }
+
+    function muatDataPembayaran() {
+        const daftar = ambilDataPembayaran();
+        const tbody = document.getElementById("tabelPembayaranBody");
+        tbody.innerHTML = "";
+
+        let totalPemasukanBulanIni = 0;
+
+        if (daftar.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#777; padding:20px;">Belum ada catatan pembayaran.</td></tr>`;
+        } else {
+            daftar.forEach((item, index) => {
+                if (item.status === "Lunas") {
+                    totalPemasukanBulanIni += item.jumlah;
+                }
+
+                let badgeClass = item.status === "Lunas" ? "badge-lunas" : "badge-belum";
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong>${item.nama}</strong><br><small style="color:#666;">${item.kamar}</small></td>
+                        <td>${item.periode}</td>
+                        <td>Rp${item.jumlah.toLocaleString('id-ID')}</td>
+                        <td><span class="status ${badgeClass}">${item.status}</span></td>
+                        <td>
+                            <button class="btn btn-tolak" onclick="hapusPembayaran(${index})">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Tampilkan total pemasukan lunas pada kartu statistik di atas
+        document.getElementById("totalPemasukan").innerText = "Rp" + totalPemasukanBulanIni.toLocaleString('id-ID');
+    }
+
+
+    // ==========================================
+    // BOOKING & LAINNYA
+    // ==========================================
+    function terimaBooking(id) {
+        if (!confirm("Terima booking ini dan ubah status kamar menjadi terisi?")) return;
+        const row = document.getElementById("booking-" + id);
+        const status = row.querySelector(".status");
+        status.className = "status status-terisi";
+        status.textContent = "Terisi";
+        alert("Booking berhasil diterima.");
+    }
+
+    function tolakBooking(id) {
+        if (!confirm("Apakah Anda yakin ingin menolak booking ini?")) return;
+        document.getElementById("booking-" + id).remove();
+        alert("Booking berhasil ditolak.");
+    }
+
+    function refreshData() {
+        muatDataLaporanAdmin();
+        muatDataPembayaran();
+        alert("Data dashboard diperbarui.");
+    }
+
+    function tambahKamar() {
+        const nomor = prompt("Masukkan nomor kamar baru (Contoh: 05):");
+        if (!nomor) return;
+        const harga = prompt("Masukkan harga sewa per bulan:");
+        if (!harga) return;
+        alert("Kamar " + nomor + " berhasil ditambahkan dengan harga Rp" + harga);
+    }
+</script>
+
+</body>
+</html>
